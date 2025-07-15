@@ -223,29 +223,27 @@
                 gap: 10px;
             }
         }
-
-    
 .link a {
-  text-decoration: none; /* removes underline */
-   background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 10px;
+  display: inline-block;
+  text-decoration: none; /* no underline */
+  color: white; /* no default blue */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-family: sans-serif;
+  font-size: 16px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .link a:hover {
-transform: translateY(-2px);
-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
 }
 
 .link h3 {
-  margin: 0; /* removes extra space */
-  font-size: 16px;
+  margin: 0;
+  font-weight: 500;
 }
     </style>
 </head>
