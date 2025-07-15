@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .setup {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .setup label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .setup select {
+            padding: 12px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .setup select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .quiz-container {
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .question {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .question h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option {
+            padding: 12px 15px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            transform: translateY(-1px);
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #e8f0fe;
+        }
+
+        .option input {
+            margin-right: 10px;
+        }
+
+        .results {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .score {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .correction {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        .correction.correct {
+            border-left: 4px solid #4caf50;
+        }
+
+        .correction.incorrect {
+            border-left: 4px solid #f44336;
+        }
+
+        .correction-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .correct-answer {
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        .incorrect-answer {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        .quiz-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .quiz-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+    
+        .link {
+            color: #ffffff;            
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Chemistry Quiz</h1>
+            <p>Test your knowledge with our comprehensive chemistry questions</p>
+        </div>
+
+        <div class="setup" id="setup">
+            <label for="questionCount">Select number of questions:</label>
+            <select id="questionCount">
+                <option value="10">10 Questions</option>
+                <option value="20">20 Questions</option>
+                <option value="30">30 Questions</option>
+                <option value="40">40 Questions</option>
+                <option value="50">50 Questions</option>
+            </select>
+            <br>
+            <button class="btn" onclick="startQuiz()">Start Quiz</button>
+        </div>
+        <div class="link">
+        <a href="https://emmaculatex-portfolio.vercel.app">
+            <h3> click @emmaculate</h3>
+        </a>
+             
+        </div>
+        <div class="quiz-container" id="quizContainer">
+            <div class="quiz-info">
+                <span id="questionNumber">Question 1 of 10</span>
+                <span id="timer">Time: 00:00</span>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+
+            <div id="questionsContainer"></div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn" onclick="submitQuiz()">Submit Quiz</button>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <div class="score" id="scoreDisplay"></div>
+            <div id="corrections"></div>
+            <button class="btn" onclick="restartQuiz()">Take Another Quiz</button>
+        <div class="link">
+            <a href="https://emmaculatex-portfolio.vercel.app"        >
+            <h3> click @emmaculate</h3>
+        </a>
+        </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "The type and number of bonds in N₂ is",
+                options: ["electrovalent and double", "electrovalent and triple", "covalent and triple", "covalent and double"],
+                correct: 2
+            },
+            {
+                question: "The intermolecular forces between two polar molecules is",
+                options: ["dipole-dipole", "dipole-induced dipole", "instantaneous dipole-induced dipole", "hydrogen bonding"],
+                correct: 0
+            },
+            {
+                question: "Strength of metallic bonding increases with",
+                options: ["decrease in size of metal ion", "increase in size of metal ion", "decrease in hydrogen bonding of metal ion", "decrease in valence electrons of metal ion"],
+                correct: 0
+            },
+            {
+                question: "The number of electron pairs in SF₆ is",
+                options: ["3", "4", "5", "6"],
+                correct: 3
+            },
+            {
+                question: "The shape and bond angle of NH₃ are",
+                options: ["tetrahedral and 109.5°", "tetrahedral and 107.5°", "trigonal pyramidal and 107.5°", "trigonal bipyramidal and 107.5°"],
+                correct: 2
+            },
+            {
+                question: "How many lone pairs of electrons are in H₂O",
+                options: ["1", "2", "3", "4"],
+                correct: 1
+            },
+            {
+                question: "The shape corresponding to SP³ hybridization is",
+                options: ["linear", "trigonal planar", "tetrahedral", "angular"],
+                correct: 2
+            },
+            {
+                question: "Trigonal planar in valence bond theory has _______ hybridization",
+                options: ["sp", "sp²", "sp³", "sp³d"],
+                correct: 1
+            },
+            {
+                question: "The shape and hybridization of CO₂ are",
+                options: ["linear and SP", "trigonal planar and SP²", "linear and SP²", "trigonal planar and SP"],
+                correct: 0
+            },
+            {
+                question: "Which of the following is not a rule for determining aromaticity",
+                options: ["it must be cyclic", "it must possess delocalized electrons", "it must obey Kekule's rule", "it must obey Huckel's rule"],
+                correct: 2
+            },
+            {
+                question: "The functional group in peptide bond is",
+                options: ["amino acid linkage", "amino linkage", "amide linkage", "carboxylic acid linkage"],
+                correct: 2
+            },
+            {
+                question: "Which of the following is not a simple protein",
+                options: ["albumins", "globins", "glycoproteins", "histones"],
+                correct: 2
+            },
+            {
+                question: "Glucose is",
+                options: ["an aldose pentose", "an aldose hexose", "a ketose hexose", "an aldose ribose"],
+                correct: 1
+            },
+            {
+                question: "Which of the following is not a reducing sugar",
+                options: ["glucose", "fructose", "galactose", "sucrose"],
+                correct: 3
+            },
+            {
+                question: "Lactose is a combination of",
+                options: ["glucose and glucose", "fructose and glucose", "galactose and glucose", "fructose and galactose"],
+                correct: 2
+            },
+            {
+                question: "The soluble portion of starch is",
+                options: ["amylopectin", "cellulose", "glycogen", "amylose"],
+                correct: 3
+            },
+            {
+                question: "Which compound is not a constitutional isomer of but-2-ene, CH₃CH=CHCH₃?",
+                options: ["CH₃CH₂CH=CH₂", "CH₃C(CH₃)=CH₂", "CH₂=CHCH₂CH₃", "CH₃CH₂CH₂CH₃"],
+                correct: 3
+            },
+            {
+                question: "Which compound is not an ether?",
+                options: ["CH₃CH₂OCH₂CH₃", "CH₃COCH₂CH₃", "Diethyl ether", "Methyl ethyl ether"],
+                correct: 1
+            },
+            {
+                question: "Which compound is a tertiary amine?",
+                options: ["(CH₃)₃CNH₂", "Primary amine", "Tertiary amine structure", "(CH₃CH₂)₂NH"],
+                correct: 2
+            },
+            {
+                question: "Which compound is a tertiary alcohol?",
+                options: ["(CH₃)₃COH", "Secondary alcohol", "Primary alcohol", "(CH₃CH₂)₂CHOH"],
+                correct: 0
+            },
+            {
+                question: "Which compound has the highest boiling point?",
+                options: ["CH₃CH₂CH₂CH₃", "Branched alkane", "CH₃CH₂OCH₃", "CH₃CH₂CH₂OH"],
+                correct: 3
+            },
+            {
+                question: "Which compound is least soluble in water?",
+                options: ["CH₃CH₂CH₂CH₃", "Branched alkane", "CH₃CH₂OCH₃", "CH₃CH₂CH₂OH"],
+                correct: 0
+            },
+            {
+                question: "Which compound is different from the others?",
+                options: ["methyl ethyl ketone", "pentan-2-one", "2-pentanone", "methyl propyl ketone"],
+                correct: 0
+            },
+            {
+                question: "Which compound is a secondary alcohol?",
+                options: ["butan-1-ol", "butan-2-ol", "isobutyl alcohol", "2-methylpropan-2-ol"],
+                correct: 1
+            },
+            {
+                question: "Which compound has the highest boiling point?",
+                options: ["butan-1-ol", "butanal", "butanone", "butanoic acid"],
+                correct: 3
+            },
+            {
+                question: "Which compound is most soluble in water?",
+                options: ["butan-1-ol", "butanal", "butanone", "butanoic acid"],
+                correct: 3
+            },
+            {
+                question: "Which alcohol has the highest boiling point?",
+                options: ["butan-1-ol", "butan-2-ol", "isobutyl alcohol", "t-butyl alcohol"],
+                correct: 0
+            },
+            {
+                question: "Which alcohol is most soluble in water?",
+                options: ["butan-1-ol", "butan-2-ol", "isobutyl alcohol", "t-butyl alcohol"],
+                correct: 3
+            },
+            {
+                question: "Which of this has the highest boiling point",
+                options: ["CH₄", "C₂H₆", "C₃H₈", "C₄H₁₀"],
+                correct: 3
+            },
+            {
+                question: "The carbonyl carbon in CH₃CHO is _____ hybridized",
+                options: ["sp²", "sp³", "sp", "none of the options"],
+                correct: 0
+            },
+            {
+                question: "The uniqueness of carbon as a point element in organic compounds is anchored on the ability of its compounds to exhibit",
+                options: ["allotropy", "isomerism", "oxidation", "crystallinity"],
+                correct: 1
+            },
+            {
+                question: "The pKa for compounds i, ii, iii, and iv are 16, 26, 45 and 62, respectively. Which of the compounds are most acidic",
+                options: ["i", "ii", "iii", "iv"],
+                correct: 0
+            },
+            {
+                question: "Which of the following conditions is odd for a real gas to show ideality?",
+                options: ["High pressure", "high temperature", "low pressure", "high volume"],
+                correct: 0
+            },
+            {
+                question: "The unit of the gas constant 'R' when PV = nRT is",
+                options: ["Jmol⁻¹K⁻¹", "J mol⁻¹", "J", "none of the above"],
+                correct: 0
+            },
+            {
+                question: "Which of the following gases exhibits behaviours that are close to ideality?",
+                options: ["NH₃", "Ar", "HCl", "As"],
+                correct: 1
+            },
+            {
+                question: "The deviation of real gases from ideal one could be due to:",
+                options: ["Atomic size", "intermolecular forces", "valency electron", "isotopy"],
+                correct: 1
+            },
+            {
+                question: "Water freezes at 0°C but ethanol does not, this could be due to",
+                options: ["Low thermal energy", "low molecular mass", "high Vander Waal forces of attraction", "high thermal energy"],
+                correct: 2
+            },
+            {
+                question: "Gases can be liquefied _______ the critical temperature",
+                options: ["At exactly", "above", "below", "without reference to"],
+                correct: 2
+            },
+            {
+                question: "Which of the following is not a remarkable substance?",
+                options: ["Liquid crystals", "glass", "colloids", "heavy water"],
+                correct: 3
+            },
+            {
+                question: "Emulsion is produced by combining liquid disperse phase and _____ continuous phase",
+                options: ["Solid", "liquid", "gas", "aqueous"],
+                correct: 1
+            },
+            {
+                question: "Which of the following is not an example of colloidal personal/household product?",
+                options: ["Milk", "detergent", "toothpaste", "coloured plastic"],
+                correct: 3
+            },
+            {
+                question: "Solutions that do not obey Raoult's law are referred to as ______ solutions",
+                options: ["Ideal", "isotropic", "concentrated", "non-ideal"],
+                correct: 3
+            },
+            {
+                question: "The formula which shows the mode of linkage of the various atoms in a molecule is called",
+                options: ["molecular formula", "structural formula", "empirical formula", "bonding formula"],
+                correct: 1
+            },
+            {
+                question: "One of these is not a chromatographic technique?",
+                options: ["Gas-Solid chromatography", "Thin layer chromatography", "Column chromatography", "partition chromatography"],
+                correct: 3
+            },
+            {
+                question: "The formula which expresses the simplest ratio of number of atom of the constituent element present is",
+                options: ["structural formula", "empirical formula", "rational formula", "geometric formula"],
+                correct: 1
+            },
+            {
+                question: "Which of these methods of purification depends on the differences in solubility",
+                options: ["distillation", "sublimation", "crystallization", "differential extraction"],
+                correct: 2
+            },
+            {
+                question: "Which technique is used to separate constituent particle of a mixture",
+                options: ["chromatography", "sublimation", "crystallization", "distillation"],
+                correct: 0
+            },
+            {
+                question: "Thin-layer chromatography uses what type of phases?",
+                options: ["Gas-Liquid", "Liquid-Liquid", "Liquid-Gas", "Liquid-Solid"],
+                correct: 3
+            },
+            {
+                question: "In the determination of elements present in an organic compound using sodium fusion test, which of the element gives bluish green colour",
+                options: ["Nitrogen", "Sulphur", "Chlorine", "Bromine"],
+                correct: 2
+            },
+            {
+                question: "An organic compound on analysis contain 40% carbon, 6.7% hydrogen if the molar mass is 60, what is the empirical formulae?",
+                options: ["CH₂", "CH₂Cl", "CH₂O", "CHO"],
+                correct: 2
+            },
+            {
+                question: "What is the molecular formulae for the compound with 40% carbon, 6.7% hydrogen and molar mass 60?",
+                options: ["C₂H₄O₂", "C₂H₂", "C₃H₆O₃", "C₂H₂O₂"],
+                correct: 0
+            }
+        ];
+
+        let currentQuiz = [];
+        let currentQuestion = 0;
+        let userAnswers = [];
+        let startTime;
+        let timerInterval;
+
+        function startQuiz() {
+            const questionCount = parseInt(document.getElementById('questionCount').value);
+            currentQuiz = getRandomQuestions(questionCount);
+            currentQuestion = 0;
+            userAnswers = [];
+            
+            document.getElementById('setup').style.display = 'none';
+            document.getElementById('quizContainer').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            
+            startTime = Date.now();
+            startTimer();
+            displayQuestions();
+        }
+
+        function getRandomQuestions(count) {
+            const shuffled = [...questions].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                document.getElementById('timer').textContent = 
+                    `Time: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function displayQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            
+            currentQuiz.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                
+                const optionsHTML = q.options.map((option, optIndex) => 
+                    `<div class="option" onclick="selectOption(${index}, ${optIndex})">
+                        <input type="radio" name="q${index}" value="${optIndex}" id="q${index}o${optIndex}">
+                        <label for="q${index}o${optIndex}">${option}</label>
+                    </div>`
+                ).join('');
+                
+                questionDiv.innerHTML = `
+                    <h3>Question ${index + 1}: ${q.question}</h3>
+                    <div class="options">
+                        ${optionsHTML}
+                    </div>
+                `;
+                
+                container.appendChild(questionDiv);
+            });
+            
+            updateProgress();
+        }
+
+        function selectOption(questionIndex, optionIndex) {
+            const options = document.querySelectorAll(`input[name="q${questionIndex}"]`);
+            options.forEach(option => option.parentElement.classList.remove('selected'));
+            
+            const selectedOption = document.getElementById(`q${questionIndex}o${optionIndex}`);
+            selectedOption.checked = true;
+            selectedOption.parentElement.classList.add('selected');
+            
+            userAnswers[questionIndex] = optionIndex;
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const answered = userAnswers.filter(answer => answer !== undefined).length;
+            const percentage = (answered / currentQuiz.length) * 100;
+            document.getElementById('progress').style.width = percentage + '%';
+            
+            document.getElementById('questionNumber').textContent = 
+                `Questions Answered: ${answered} of ${currentQuiz.length}`;
+        }
+
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            
+            let score = 0;
+            const corrections = [];
+            
+            currentQuiz.forEach((q, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === q.correct;
+                
+                if (isCorrect) score++;
+                
+                corrections.push({
+                    question: q.question,
+                    options: q.options,
+                    userAnswer: userAnswer,
+                    correctAnswer: q.correct,
+                    isCorrect: isCorrect
+                });
+            });
+            
+            displayResults(score, corrections);
+        }
+
+        function displayResults(score, corrections) {
+            document.getElementById('quizContainer').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+            
+            const percentage = Math.round((score / currentQuiz.length) * 100);
+            document.getElementById('scoreDisplay').innerHTML = 
+                `Your Score: ${score}/${currentQuiz.length} (${percentage}%)`;
+            
+            const correctionsContainer = document.getElementById('corrections');
+            correctionsContainer.innerHTML = '<h3>Review Your Answers:</h3>';
+            
+            corrections.forEach((correction, index) => {
+                const correctionDiv = document.createElement('div');
+                correctionDiv.className = `correction ${correction.isCorrect ? 'correct' : 'incorrect'}`;
+                
+                const userAnswerText = correction.userAnswer !== undefined ? 
+                    correction.options[correction.userAnswer] : 'No answer';
+                
+                correctionDiv.innerHTML = `
+                    <div class="correction-header">Question ${index + 1}: ${correction.question}</div>
+                    <div>Your answer: <span class="${correction.isCorrect ? 'correct-answer' : 'incorrect-answer'}">${userAnswerText}</span></div>
+                    <div>Correct answer: <span class="correct-answer">${correction.options[correction.correctAnswer]}</span></div>
+                `;
+                
+                correctionsContainer.appendChild(correctionDiv);
+            });
+        }
+
+        function restartQuiz() {
+            document.getElementById('setup').style.display = 'block';
+            document.getElementById('quizContainer').style.display = 'none';
+            document.getElementById('results').style.display = 'none';
+            
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+        }
+    </script>
+</body>
+</html>
