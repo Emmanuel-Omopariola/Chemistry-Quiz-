@@ -225,9 +225,26 @@
         }
 
     
-        .link {
-            color: #ffffff;            
-        }
+.link a {
+  display: inline-block;
+  text-decoration: none; /* removes underline */
+  color: white; /* no default browser blue */
+  background-color: purple; /* solid purple button */
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-family: sans-serif;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.link a:hover {
+  background-color: rebeccapurple; /* darker on hover */
+  transform: scale(1.05); /* slight zoom effect */
+}
+
+.link h3 {
+  margin: 0; /* removes extra space */
+  font-size: 16px;
+}
     </style>
 </head>
 <body>
