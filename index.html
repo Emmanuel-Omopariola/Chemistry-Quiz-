@@ -226,19 +226,21 @@
 
     
 .link a {
-  display: inline-block;
   text-decoration: none; /* removes underline */
-  color: white; /* no default browser blue */
-  background-color: linear-gradient(45deg, #667eea, #764ba2) /* solid purple button */
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-family: sans-serif;
-  transition: background-color 0.3s, transform 0.2s;
+   background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
 }
 
 .link a:hover {
-  background-color: linear-gradient(45deg, #667eea, #764ba2) /* darker on hover */
-  transform: scale(1.05); /* slight zoom effect */
+transform: translateY(-2px);
+box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .link h3 {
